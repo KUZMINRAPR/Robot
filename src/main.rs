@@ -5,6 +5,7 @@ use eframe::run_native;
 mod robot;
 mod matrix;
 use eframe::App;
+use egui_plot::{Line, PlotPoints};
 use robot::{Robot,Message};
 static mut ROBOT: Robot = Robot::new();
 static CENTER: Vec2 = Vec2{x: 0.0, y: 0.0};
@@ -23,6 +24,13 @@ impl App for Robot {
                     robot.position.y = (robot.l + robot.position.x) * robot.a.to_radians().sin();
                     robot.message = Message::None;
                 }
+                Message::BasePositionChanged => {
+                    robot.base.center.x = robot.position.x;
+                    robot.base.center.y = -0.5;
+                }
+                Message::YPositionChanged => {
+                    
+                }
                 _ => ()
             }
         }
@@ -32,7 +40,9 @@ impl App for Robot {
             ui.add(Slider::new(&mut ROBOT.a,0.0..=180.0).text("a"));
             if tmp.a != ROBOT.a {ROBOT.message = Message::CornerChanged;}
             ui.add(Slider::new(&mut ROBOT.position.x,-10.0..=10.0).text("k"));
-            ui.add(Slider::new(&mut ROBOT.position.y,-10.0..=10.0).text("n"));
+            if tmp.k != ROBOT.position.x {ROBOT.message = Message::BasePositionChanged;}
+            ui.add(Slider::new(&mut ROBOT.position.y,0.0..=10.0).text("n"));
+            if tmp.n != ROBOT.position.y {ROBOT.message = Message::YPositionChanged;}
             ui.add(Slider::new(&mut ROBOT.l,0.0..=10.0).text("l"));
             if tmp.l != ROBOT.l {ROBOT.message = Message::LenghtChanged;}
             robot_position(&mut ROBOT);

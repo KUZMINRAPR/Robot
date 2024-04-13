@@ -3,10 +3,12 @@ use eframe::egui::{remap, Color32, Response, Ui, Vec2};
 use egui_plot::{Legend, Line, Plot, PlotPoints};
 mod rectangle;
 use rectangle::Rectangle;
-#[derive(Default,Clone)]
+#[derive(Default,Clone, PartialEq)]
 pub enum Message {
     CornerChanged,
     LenghtChanged,
+    BasePositionChanged,
+    YPositionChanged,
     #[default]
     None
 }
@@ -62,6 +64,7 @@ impl Robot {
         plot.show(ui, |plot_ui| {
             plot_ui.line(self.circle());
             plot_ui.line(self.base.make_line());
+            plot_ui.line(Line::new(PlotPoints::from(vec![(self.base.center.x as f64, self.base.center.y as f64).into(),(self.position.x as f64,self.position.y as f64,).into()])))
         }).response
     }
 }
