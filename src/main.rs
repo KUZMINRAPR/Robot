@@ -25,8 +25,7 @@ impl App for Robot {
                     robot.message = Message::None;
                 }
                 Message::BasePositionChanged => {
-                    robot.base.center.x = robot.position.x;
-                    robot.base.center.y = -0.5;
+                    robot.position.x = robot.base.center.x;
                 }
                 Message::YPositionChanged => {
                     
@@ -39,10 +38,10 @@ impl App for Robot {
             let tmp = ROBOT.clone();
             ui.add(Slider::new(&mut ROBOT.a,0.0..=180.0).text("a"));
             if tmp.a != ROBOT.a {ROBOT.message = Message::CornerChanged;}
-            ui.add(Slider::new(&mut ROBOT.position.x,-10.0..=10.0).text("k"));
-            if tmp.k != ROBOT.position.x {ROBOT.message = Message::BasePositionChanged;}
+            ui.add(Slider::new(&mut ROBOT.base.center.x,-10.0..=10.0).text("k"));
+            if tmp.base.center.x != ROBOT.base.center.x {ROBOT.message = Message::BasePositionChanged;}
             ui.add(Slider::new(&mut ROBOT.position.y,0.0..=10.0).text("n"));
-            if tmp.n != ROBOT.position.y {ROBOT.message = Message::YPositionChanged;}
+            if tmp.position.y != ROBOT.position.y {ROBOT.message = Message::YPositionChanged;}
             ui.add(Slider::new(&mut ROBOT.l,0.0..=10.0).text("l"));
             if tmp.l != ROBOT.l {ROBOT.message = Message::LenghtChanged;}
             robot_position(&mut ROBOT);
