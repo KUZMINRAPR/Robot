@@ -1,9 +1,9 @@
 use std::f32::consts::TAU;
-use eframe::egui::{remap, Color32, Response, Ui, Vec2};
+use eframe::egui::{remap, Color32, Pos2, Response, Ui, Vec2};
 use egui_plot::{Legend, Line, Plot, PlotPoints};
 mod rectangle;
 use rectangle::Rectangle;
-#[derive(Default,Clone, PartialEq)]
+#[derive(Default,Clone)]
 pub enum Message {
     CornerChanged,
     LenghtChanged,
@@ -21,7 +21,8 @@ pub struct Robot {
     pub a:f32,
     pub k:f32,
     pub n:f32,
-    pub l:f32
+    pub l:f32,
+    pub prev_position : Vec2,
 }
 
 impl Robot {
@@ -52,8 +53,12 @@ impl Robot {
             n: 0.0,
             l: 0.0,
             message: Message::None,
-            base: Rectangle::new()
+            base: Rectangle::new(),
+            prev_position: Vec2{x: 0.0, y: 0.0},
         }
+    }
+    pub fn calculate_l_line(&self, position: Vec2) -> Line {
+        Line::new(PlotPoints::new(vec![(self.position.x as f64, self.position.y as f64).into(),(position.x as f64,position.y as f64).into()]))
     }
     pub fn draw(&self, ui: &mut Ui) -> Response {
         let plot = Plot::new("robot")
@@ -64,7 +69,8 @@ impl Robot {
         plot.show(ui, |plot_ui| {
             plot_ui.line(self.circle());
             plot_ui.line(self.base.make_line());
-            plot_ui.line(Line::new(PlotPoints::from(vec![(self.base.center.x as f64, self.base.center.y as f64).into(),(self.position.x as f64,self.position.y as f64,).into()])))
+            plot_ui.line(Line::new(PlotPoints::from(vec![(self.base.center.x as f64, self.base.center.y as f64).into(),(self.prev_position.x as f64,self.prev_position.y as f64,).into()])));
+            plot_ui.line(Line::new(PlotPoints::new(vec![(self.prev_position.x as f64, self.prev_position.y as f64).into(),(self.position.x as f64,self.position.y as f64).into()])));
         }).response
     }
 }

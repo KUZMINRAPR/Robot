@@ -1,11 +1,11 @@
-use eframe::egui::{self};
+use eframe::egui::{self, Ui};
 use eframe::egui::{Slider, Vec2, Window};
 use eframe::run_native;
 
 mod robot;
 mod matrix;
 use eframe::App;
-use egui_plot::{Line, PlotPoints};
+use egui_plot::{Line, PlotPoints,Plot};
 use robot::{Robot,Message};
 static mut ROBOT: Robot = Robot::new();
 static CENTER: Vec2 = Vec2{x: 0.0, y: 0.0};
@@ -18,6 +18,7 @@ impl App for Robot {
                     robot.position.x = robot.a.to_radians().cos() * radius + CENTER.x;
                     robot.position.y = robot.a.to_radians().sin() * radius + CENTER.y;
                     robot.message = Message::None;
+                    robot.prev_position = robot.position;
                 }
                 Message::LenghtChanged => {
                     robot.position.x = (robot.l + robot.position.x) * robot.a.to_radians().cos();
@@ -26,11 +27,13 @@ impl App for Robot {
                 }
                 Message::BasePositionChanged => {
                     robot.position.x = robot.base.center.x;
+                    robot.message = Message::None;
+                    robot.prev_position = robot.position;
                 }
                 Message::YPositionChanged => {
-                    
+                    robot.prev_position = robot.position;
                 }
-                _ => ()
+                _ => {}
             }
         }
         Window::new("Robot").show(ctx, |ui| {
