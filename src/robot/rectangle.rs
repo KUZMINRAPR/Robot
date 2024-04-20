@@ -1,6 +1,6 @@
 use eframe::egui::Pos2;
 use egui_plot::{Line, PlotPoints};
-#[derive(Default,Clone)]
+#[derive(Default,Clone, PartialEq)]
 pub struct Rectangle {
     pub lenght: f64,
     pub width: f64,

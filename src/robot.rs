@@ -1,22 +1,12 @@
 use std::f32::consts::TAU;
-use eframe::egui::{remap, Color32, Pos2, Response, Ui, Vec2};
+use eframe::egui::{remap, Color32, Response, Ui, Vec2};
 use egui_plot::{Legend, Line, Plot, PlotPoints};
 mod rectangle;
 use rectangle::Rectangle;
-#[derive(Default,Clone)]
-pub enum Message {
-    CornerChanged,
-    LenghtChanged,
-    BasePositionChanged,
-    YPositionChanged,
-    #[default]
-    None
-}
-#[derive(Default, Clone)]
+#[derive(Default, Clone, PartialEq)]
 pub struct Robot {
     pub show_grid: bool,
     pub position : Vec2,
-    pub message: Message,
     pub base: Rectangle,
     pub a:f32,
     pub k:f32,
@@ -52,14 +42,11 @@ impl Robot {
             k: 0.0,
             n: 0.0,
             l: 0.0,
-            message: Message::None,
             base: Rectangle::new(),
             prev_position: Vec2{x: 0.0, y: 0.0},
         }
     }
-    pub fn calculate_l_line(&self, position: Vec2) -> Line {
-        Line::new(PlotPoints::new(vec![(self.position.x as f64, self.position.y as f64).into(),(position.x as f64,position.y as f64).into()]))
-    }
+
     pub fn draw(&self, ui: &mut Ui) -> Response {
         let plot = Plot::new("robot")
             .show_grid(self.show_grid)
@@ -73,4 +60,8 @@ impl Robot {
             plot_ui.line(Line::new(PlotPoints::new(vec![(self.prev_position.x as f64, self.prev_position.y as f64).into(),(self.position.x as f64,self.position.y as f64).into()])));
         }).response
     }
+    pub fn moment_position(&mut self){
+        self.position.x = self.a.to_radians().cos() * self.position.x - self.a.to_radians().sin() * self.position.y + self.l*self.a.to_radians().cos() + self.k;
+        self.position.y = self.a.to_radians().sin() * self.position.x + self.a.to_radians().cos() * self.position.y + self.l*self.a.to_radians().sin() + self.n;
+        }
 }
