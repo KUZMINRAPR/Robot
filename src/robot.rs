@@ -61,7 +61,7 @@ impl Robot {
         }).response
     }
     pub fn moment_position(&mut self){
-        self.position.x = self.a.to_radians().cos() * self.position.x - self.a.to_radians().sin() * self.position.y + self.l*self.a.to_radians().cos() + self.k;
-        self.position.y = self.a.to_radians().sin() * self.position.x + self.a.to_radians().cos() * self.position.y + self.l*self.a.to_radians().sin() + self.n;
+        self.position.x = self.l*self.a.to_radians().cos() + self.k;
+        self.position.y = self.l*self.a.to_radians().sin() + self.n;
         }
 }
